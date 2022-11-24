@@ -1,7 +1,9 @@
 const createError = require('http-errors')
 const productsModel = require('../models/products')
 const commonHelper = require('../helper/common')
-const client = require('../config/redis')
+const uploadGoogleDrive = require('../utils/uploadGoogleDrive');
+const deleteGoogleDrive = require('../utils/deleteDrive');
+// const client = require('../config/redis')
 const productsController = {  
 
   searchKeywordsProducts: async (request, response) => {
@@ -19,7 +21,7 @@ const productsController = {
   getAllProductsLimit: async(req, res) => {
     try{
       const page = Number(req.query.page) || 1
-      const limit = Number(req.query.limit) || 5
+      const limit = Number(req.query.limit) || 20
       const offset = (page - 1) * limit
       const sortby = req.query.sortby || "name"
       const sort = req.query.sort || "ASC"
@@ -53,7 +55,7 @@ const productsController = {
     productsModel.select(id)
       .then(
         result => {
-          client.setEx(`products/${id}`,60*60,JSON.stringify(result.rows))
+          // client.setEx(`products/${id}`,60*60,JSON.stringify(result.rows))
           commonHelper.response(res, result.rows, 200, "get data success from database")
         }
       )
@@ -61,19 +63,22 @@ const productsController = {
       )
   },
   insert: async(req, res) => {
-    const PORT = process.env.PORT || 5000
-    const DB_HOST = process.env.DB_HOST || 'localhost'
-    const photo = req.file.filename;
+    // const PORT = process.env.PORT || 5000
+    // const DB_HOST = process.env.DB_HOST || 'localhost'
+    const file = req.file;
     const { name, stock, price, descriptions, category_id, transactions_id, merk, condition} = req.body
     const {rows: [count]} = await productsModel.countProducts()
     const id = Number(count.count)+1;
+
+    let photo = await uploadGoogleDrive(file);
 
     const data ={
       id,
       name,
       stock,
       price,
-      photo:`http://${DB_HOST}:${PORT}/img/${photo}`,
+      // photo:`http://${DB_HOST}:${PORT}/img/${photo}`,
+      photo: `https://drive.google.com/thumbnail?id=${photo.id}&sz=s1080`,
       descriptions,
       category_id,
       transactions_id,
@@ -88,21 +93,39 @@ const productsController = {
   },
   update: async(req, res, next) => {
     try{
-      const PORT = process.env.PORT || 5000
-      const DB_HOST = process.env.DB_HOST || 'localhost'
+      // const PORT = process.env.PORT || 5000
+      // const DB_HOST = process.env.DB_HOST || 'localhost'
       const id = Number(req.params.id)
-      const photo = req.file.filename;
-      const { name,stock,price,descriptions, category_id, transactions_id, merk, condition} = req.body
-      const {rowCount} = await productsModel.findId(id)
+
+      const {rowCount, rows} = await productsModel.findId(id)
       if(!rowCount){
         return next(createError(403,"ID is Not Found"))
       }
+
+      // const photo = req.file.filename;
+      let { photo } = rows[0];
+
+      if (req.file) {
+        console.log(photo);
+        // menghapus thumbnail sebelumnya di gd jika sebelumnya sudah pernah upload
+        if (photo) {
+          const productPhotoID = photo.split("id=")[1].split("&sz")[0];
+          console.log(productPhotoID);
+          await deleteGoogleDrive(productPhotoID);
+        }
+        // upload photo baru ke gd
+        photo = await uploadGoogleDrive(req.file);
+      }
+
+      const { name,stock,price,descriptions, category_id, transactions_id, merk, condition} = req.body
+      
       const data ={
         id,
         name,
         stock,
         price,
-        photo:`http://${DB_HOST}:${PORT}/img/${photo}`,
+        // photo:`http://${DB_HOST}:${PORT}/img/${photo}`,
+        photo: `https://drive.google.com/thumbnail?id=${photo.id}&sz=s1080`,
         descriptions,
         category_id, 
         transactions_id,
@@ -120,22 +143,41 @@ const productsController = {
         }
   },
   delete: async(req, res, next) => {
-    try{
-      const id = Number(req.params.id)
-      const {rowCount} = await productsModel.findId(id)
-      if(!rowCount){
-        return next(createError(403,"ID is Not Found"))
-      }
-      productsModel.deleteProducts(id)
-        .then(
-          result => commonHelper.response(res, result.rows, 200, "Product deleted")
-        )
-        .catch(err => res.send(err)
-        )
-    }catch(error){
-        console.log(error);
+    // try{
+    //   const id = Number(req.params.id)
+    //   const {rowCount} = await productsModel.findId(id)
+    //   if(!rowCount){
+    //     return next(createError(403,"ID is Not Found"))
+    //   }
+
+    //   productsModel.deleteProducts(id)
+    //     .then(
+    //       result => commonHelper.response(res, result.rows, 200, "Product deleted")
+    //     )
+    //     .catch(err => res.send(err)
+    //     )
+    // }catch(error){
+    //     console.log(error);
+    // }
+
+    const id = req.params.id;
+
+    const { rows } = await productsModel.showProduct(id);
+
+    let { thumbnail } = rows[0];
+
+    if (thumbnail) {
+      console.log(thumbnail);
+      const thumbnailGoogleDriveID = thumbnail.split("id=")[1].split("&sz")[0];
+      await deleteGoogleDrive(thumbnailGoogleDriveID);
+      console.log(thumbnailGoogleDriveID);
     }
-  }
+
+    productsModel.deleteProducts(id)
+      .then(result => commonHelper.response(res, result.rows, 200, "Product deleted"))
+      .catch((error) => commonHelper.response.send(error));
+  },
+
 }
 
 module.exports = productsController

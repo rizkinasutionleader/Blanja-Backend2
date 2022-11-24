@@ -1,100 +1,57 @@
-require('dotenv').config()
+require('dotenv').config();
+const { google } = require('googleapis');
+const fs = require('fs');
 
-const { google } = require('googleapis')
-const fs = require('fs')
-
+// oauth2 config
 const oAuth2Client = new google.auth.OAuth2(
-    process.env.GOOGLE_CLIENT_ID,
-    process.env.GOOGLE_CLIENT_SECRET,
-    process.env.REDIRECT_URI
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  process.env.REDIRECT_URI,
 );
+oAuth2Client.setCredentials({ refresh_token: process.env.DRIVE_REFRESH_TOKEN });
 
-oAuth2Client.setCredentials({
-    refresh_token: process.env.DRIVE_REFRESH_TOKEN
-})
+const uploadGoogleDrive = async (file) => {
+  try {
+    const drive = google.drive({
+      version: 'v3',
+      auth: oAuth2Client,
+    });
 
-const uploadGoogleDrive = async(file) =>{
-    try {
-        const drive = google.drive({
-            version: "v3",
-            auth: oAuth2Client
-        })
+    // upload to gd
+    const response = await drive.files.create({
+      requestBody: {
+        name: file.filename,
+        mimeType: file.mimetype,
+        parents: ['19UYkNaLseImUFyjI5nGdKWJdKGeSg7uO'],
+      },
+      media: {
+        mimeType: file.mimetype,
+        body: fs.createReadStream(file.path),
+      },
+    });
 
-        const response = await drive.files.create({
-            requestBody: {
-                name: file.filename,
-                mimeType: file.mimeType,
-                parents: ['1QO-waprZAe4SODG5OlANNzhwCy9vIxtb']
-            },
-            media: {
-                mimeType: file.mimeType,
-                body: fs.createReadStream(file.path)
-            }
-        });
+    // set permission
+    await drive.permissions.create({
+      fileId: response.data.id,
+      requestBody: {
+        role: 'reader',
+        type: 'anyone',
+      },
+    });
 
-        await drive.permissions.create({
-            fileId: response.data.id,
-            requestBody: {
-                role: "reader",
-                type: 'anyone'
-            }
-        })
+    // get gd link
+    const result = await drive.files.get({
+      fileId: response.data.id,
+      fields: 'webViewLink, webContentLink',
+    });
 
-        const result = await drive.files.get({
-            fileId: response.data.id,
-            fields: 'webViewLink, webContentLink'
-        })
-
-        return {
-            id: response.data.id,
-            gdLink: result.data.webViewLink
-        }
-
-    } catch (error) {
-        console.log(error)
-    }
+    return {
+      id: response.data.id,
+      gdLink: result.data.webViewLink,
+    };
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-const uploadGoogleDriveProduct = async(file) =>{
-    try {
-        const drive = google.drive({
-            version: "v3",
-            auth: oAuth2Client
-        })
-
-        const response = await drive.files.create({
-            requestBody: {
-                name: file.filename,
-                mimeType: file.mimeType,
-                parents: ['1o-FdBmJ30UZ-apwoutsGR4_gW1FIGPBU']
-            },
-            media: {
-                mimeType: file.mimeType,
-                body: fs.createReadStream(file.path)
-            }
-        });
-
-        await drive.permissions.create({
-            fileId: response.data.id,
-            requestBody: {
-                role: "reader",
-                type: 'anyone'
-            }
-        })
-
-        const result = await drive.files.get({
-            fileId: response.data.id,
-            fields: 'webViewLink, webContentLink'
-        })
-
-        return {
-            id: response.data.id,
-            gdLink: result.data.webViewLink
-        }
-
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-module.exports = { uploadGoogleDrive, uploadGoogleDriveProduct };
+module.exports = uploadGoogleDrive;

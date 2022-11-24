@@ -1,54 +1,84 @@
-# List third party module
-| Thrid Party | npm install |
-| ------ | ------ |
-| [Express] | npm i express  |
-| [Nodemon] | npm i nodemon  |
-| [Morgan] |  npm i morgan  |
-| [PostgresSQL] | npm i pg |
-| [Dotenv] | npm i dotenv |
-| [CORS] | npm i cors |
-| [Eslint] | npm i eslint |
-| [Http-errors] | npm i http-errors |
-| [Bcrypt.js] | npm i bcryptjs |
-| [Uuid] | npm i uuid |
-| [Jsonwebtoken] | npm i jsonwebtoken |
-| [Multer] | npm i multer |
-| [Node-Redis] | npm i redis |
+<div align="center">
+  <img src="./readme/logo.png" />
+</div>
+<h3 align="center">Backend Blanja Apps</h3>
+<p align="center">
+  <a href="https://telegram-chat-be2-production.up.railway.app/">View API Demo</a>
+</p>
 
+<!-- ABOUT THE PROJECT -->
 
+## About The Project
 
+This is a Restful API repository for Blanja Apps. This Restful API is built using ExpressJS and PostgreSQL.
 
-[express]: <http://expressjs.com>
-[Nodemon]: <https://www.npmjs.com/package/nodemon>
-[Morgan]: <https://www.npmjs.com/package/morgan>
-[PostgresSQL]: <https://node-postgres.com>
-[Dotenv]: <https://www.npmjs.com/package/dotenv>
-[CORS]: <https://www.npmjs.com/package/cors>
-[Eslint]: <https://eslint.org>
-[Http-errors]: <https://www.npmjs.com/package/http-errors>
-[Bcrypt.js]: <https://www.npmjs.com/package/bcryptjs>
-[Uuid]: <https://www.npmjs.com/package/uuid>
-[Jsonwebtoken]: <https://www.npmjs.com/package/jsonwebtoken>
-[Multer]: <https://www.npmjs.com/package/multer>
-[Node-Redis]: <https://www.npmjs.com/package/redis>
+### Technology Used
 
+[express]: http://expressjs.com
+[nodemon]: https://www.npmjs.com/package/nodemon
+[morgan]: https://www.npmjs.com/package/morgan
+[postgressql]: https://node-postgres.com
+[dotenv]: https://www.npmjs.com/package/dotenv
+[cors]: https://www.npmjs.com/package/cors
+[eslint]: https://eslint.org
+[http-errors]: https://www.npmjs.com/package/http-errors
+[bcrypt.js]: https://www.npmjs.com/package/bcryptjs
+[uuid]: https://www.npmjs.com/package/uuid
+[jsonwebtoken]: https://www.npmjs.com/package/jsonwebtoken
+[multer]: https://www.npmjs.com/package/multer
 
-## Installation
+## Getting Started
 
-- npm install
-- npm run dev or npm run server
+### Installation
 
-## Debug
+- Clone this project with `git clone https://github.com/rizkirnasution/Backend-TelegramChatApps.git`
+- Install package required with `npm install`
+- Setting .env
 
-- npm run lint
+```bash
+PORT=
 
-## installation
+# database
+DB_USERNAME =
+DB_HOST =
+DB_DATABASE =
+DB_PASSWORD =
+DB_PORT =
 
-- npm install
-- npm run dev or npm run server
+# jwt
+SECRET_KEY_JWT=
 
-## debug
+# google
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+REDIRECT_URI=
+GMAIL_REFRESH_TOKEN=
+DRIVE_REFRESH_TOKEN=
+```
 
-- npm run lint
+### Executing program
 
+- Run program with `npm run dev` for development and `npm run start` for production
 
+## Endpoint List
+
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://documenter.postman.com/preview/23359803-64797b29-0b0e-478c-9194-7271cbba4acd?environment=&versionTag=latest&apiName=CURRENT&version=latest&documentationLayout=classic-double-column&right-sidebar=303030&top-bar=FFFFFF&highlight=EF5B25)
+
+<!-- RELATED PROJECT -->
+
+## RELATED PROJECT
+
+- [Frontend Blanja Apps](https://github.com/rizkirnasution/Frontend-TelegramChatApps.git)
+- [Frontend Blanja Apps Demo](https://frontend-telegram-chat-apps.vercel.app/)
+
+## Authors
+
+Contributors names and contact info:
+
+1. Rizki Romadhona Nasution
+
+- [Linkedin](https://www.linkedin.com/in/rizkiromadhonanasution)
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details

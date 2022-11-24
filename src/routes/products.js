@@ -14,7 +14,7 @@ const upload = require('../middleware/upload')
 // router.put('/:id', upload.single('photo'), productsController.update);
 // router.delete('/:id', productsController.delete);
 
-router.get('/cari/', productsController.searchKeywordsProducts);
+router.get('/cari', productsController.searchKeywordsProducts);
 router.get('/pagination/', productsController.getAllProductsLimit);
 router.get('/', productsController.getAllProducts);
 router.get('/:id', productsController.getProducts);
