@@ -162,9 +162,12 @@ const productsController = {
 
     const id = req.params.id;
 
-    const { rows } = await productsModel.showProduct(id);
+      const {rowCount} = await productsModel.findId(id)
+      if(!rowCount){
+        return next(createError(403,"ID is Not Found"))
+      }
 
-    let { thumbnail } = rows[0];
+    let { thumbnail } = rowCount;
 
     if (thumbnail) {
       console.log(thumbnail);
@@ -173,10 +176,14 @@ const productsController = {
       console.log(thumbnailGoogleDriveID);
     }
 
-    productsModel.deleteProducts(id)
-      .then(result => commonHelper.response(res, result.rows, 200, "Product deleted"))
-      .catch((error) => commonHelper.response.send(error));
-  },
+  
+      productsModel.deleteProducts(id)
+        .then(
+          result => commonHelper.response(res, result.rows, 200, "Product deleted")
+        )
+        .catch(err => res.send(err)
+        )
+    }
 
 }
 
