@@ -3,7 +3,7 @@
 </div>
 <h3 align="center">Backend Blanja Apps</h3>
 <p align="center">
-  <a href="https://telegram-chat-be2-production.up.railway.app/">View API Demo</a>
+  <a href="https://blanja-backend2-production.up.railway.app/">View API Demo</a>
 </p>
 
 <!-- ABOUT THE PROJECT -->
@@ -31,7 +31,7 @@ This is a Restful API repository for Blanja Apps. This Restful API is built usin
 
 ### Installation
 
-- Clone this project with `git clone https://github.com/rizkirnasution/Backend-TelegramChatApps.git`
+- Clone this project with `git clone https://github.com/rizkirnasution/Backend-BlanjaApps.git`
 - Install package required with `npm install`
 - Setting .env
 
@@ -68,8 +68,8 @@ DRIVE_REFRESH_TOKEN=
 
 ## RELATED PROJECT
 
-- [Frontend Blanja Apps](https://github.com/rizkirnasution/Frontend-TelegramChatApps.git)
-- [Frontend Blanja Apps Demo](https://frontend-telegram-chat-apps.vercel.app/)
+- [Frontend Blanja Apps](https://github.com/rizkirnasution/Frontend-BlanjaApps.git)
+- [Frontend Blanja Apps Demo](https://frontend-blanja-apps.vercel.app/)
 
 ## Authors
 
