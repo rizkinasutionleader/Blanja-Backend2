@@ -13,7 +13,12 @@ const DB_HOST = process.env.DB_HOST
 
 app.use(express.json());
 app.use(morgan('dev'));
-app.use(cors());
+app.use(cors({
+  origin: "https://frontend-blanja-apps.vercel.app",
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  methods: ['GET', 'PUT', 'POST', 'DELETE'],
+  credentials: true
+}));
 // app.use(helmet());
 app.use(xss());
 app.use(express.raw())
